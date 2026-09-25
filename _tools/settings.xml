@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Maven 闁板秶鐤嗛敍姘拱閸﹂绮ㄦ惔鎾茬秴缂?+ 闂冨潡鍣锋禍鎴︽殔閸?  閻劍纭堕敍姝畍n -s "..\..\_tools\settings.xml" clean compile
+
+  閸忓啰绀屾い鍝勭碍鐠囧瓨妲戦敍?    Maven 閻?settings 閺堝娴愮€规氨娈戦崗鍐妞ゅ搫绨敍鍧檕calRepository 韫囧懘銆忛崷?mirrors 娑斿澧犻敍澶涚礉
+    妞ゅ搫绨柨娆庣啊閸︺劍鏌婇悧?Maven 闁插奔绱伴惄瀛樺复閹躲儵鏁婇敍灞惧娴犮儴绻栭柌灞惧瘻鐟欏嫯瀵栭幒鎺戝灙閵?-->
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+  <!-- 閺堫剙婀存禒鎾崇氨閿涙矮绶风挧鏍︾瑓鏉炶棄鍩屾潻娆撳櫡閿涘奔绠ｉ崥搴ｎ瀲缁惧じ绡冮懗鐣岀椽鐠?-->
+  <localRepository>C:\Users\Sword\Desktop\test\maven-repo</localRepository>
+
+  <mirrors>
+    <!--
+      闂冨潡鍣锋禍鎴︽殔閸嶅骏绱伴崶钘夊敶閻╃绻?Maven 娑擃厼銇庢禒鎾崇氨瀵板牊鍙冮悽姘冲殾鐡掑懏妞傞敍?      閹广垺鍨氶梼鍧楀櫡娴滄垵鎮楅幏?Spring Boot 娓氭繆绂嗚箛?10 閸婂秳浜掓稉濞库偓?      mirrorOf=central 鐞涖劎銇?閹碘偓閺堝骞撴稉顓炪亷娴犳挸绨遍惃鍕嚞濮瑰倿鍏橀弨纭呰泲鏉╂瑩鍣?閵?    -->
+    <mirror>
+      <id>aliyun-public</id>
+      <name>Aliyun Public</name>
+      <url>https://maven.aliyun.com/repository/public</url>
+      <mirrorOf>central</mirrorOf>
+    </mirror>
+  </mirrors>
+
+  <profiles>
+    <profile>
+      <id>jdk17</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+        <jdk>17</jdk>
+      </activation>
+      <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.release>17</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+      </properties>
+    </profile>
+  </profiles>
+
+</settings>

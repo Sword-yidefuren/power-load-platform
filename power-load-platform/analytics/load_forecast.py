@@ -75,12 +75,19 @@ matplotlib.rcParams["axes.unicode_minus"] = False  # 让负号正常显示
 # ============================================================
 #  配置
 # ============================================================
+#  和 Spring Boot 的 application.yml 保持同一个原则：
+#  凭据优先从环境变量读，读不到才用本地演示默认值。
+#  这样仓库里看不到真实口令，同时本地又能直接跑。
+#
+#  想覆盖的话（PowerShell）：
+#     $env:DB_PASSWORD = 'your_password'
+#     python power-load-platform/analytics/load_forecast.py
 
-DB_USER = "root"
-DB_PASS = "root123456"
-DB_HOST = "127.0.0.1"
-DB_PORT = 3306
-DB_NAME = "power_load"
+DB_USER = os.environ.get("DB_USERNAME", "root")
+DB_PASS = os.environ.get("DB_PASSWORD", "root123456")
+DB_HOST = os.environ.get("DB_HOST", "127.0.0.1")
+DB_PORT = int(os.environ.get("DB_PORT", "3306"))
+DB_NAME = os.environ.get("DB_NAME", "power_load")
 
 MODEL_NAME = "linear_regression"
 

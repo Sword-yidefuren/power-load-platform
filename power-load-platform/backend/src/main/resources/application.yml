@@ -14,8 +14,19 @@ spring:
     #   serverTimezone=Asia/Shanghai -> MySQL 8 时区必须显式指定
     #   characterEncoding=utf8    -> 中文不乱码
     url: jdbc:mysql://127.0.0.1:3306/power_load?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&characterEncoding=utf8
-    username: root
-    password: root123456
+
+    # ============================================================
+    #  ${环境变量名:默认值} 是 Spring 的占位符语法，冒号后面是默认值。
+    #
+    #  这样写的好处：
+    #    1. 仓库里不再出现真实口令 —— 生产环境由运维/配置中心注入环境变量
+    #    2. 本地开发不用配任何环境变量，直接用默认值就能跑起来
+    #    3. 想覆盖时只要在启动前 set DB_USERNAME=xxx / set DB_PASSWORD=xxx
+    #
+    #  一句话："凭据走环境，仓库里只留占位符和一个方便演示的本地默认值。"
+    # ============================================================
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root123456}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:

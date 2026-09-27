@@ -456,12 +456,24 @@ http://127.0.0.1:5173
 
 ```yaml
 url: jdbc:mysql://127.0.0.1:3306/power_load?...
-username: root
-password: root123456
+username: ${DB_USERNAME:root}
+password: ${DB_PASSWORD:root123456}
 ```
 
-> ⚠️ **这是本地演示库的密码，为了跑起来方便直接写在配置里。**
-> 生产环境的正确做法是用环境变量或配置中心注入，不要把凭据提交到仓库。
+**`${环境变量名:默认值}` 是 Spring 的占位符语法**，冒号后面是默认值。这样处理的原因：
+
+1. **仓库里不出现真实口令** —— 生产环境由运维通过环境变量或配置中心注入
+2. **本地开发零配置** —— 不设任何环境变量时，用的是冒号后面的演示默认值，直接就能跑
+3. **需要覆盖时**只要在启动前设置环境变量：
+
+```powershell
+$env:DB_PASSWORD = 'your_password'
+mvn spring-boot:run
+```
+
+> 同一个原则在 Python 脚本里也照做了（`load_forecast.py` 用 `os.environ.get("DB_PASSWORD", "root123456")`）。
+> 两边的默认值都是**本地演示库的弱口令**，仅为让项目开箱可跑；
+> 真实环境必须由环境变量覆盖，且不应使用这样的口令。
 
 ---
 

@@ -19,12 +19,23 @@ target/
 *.war
 
 # ---------- Node / 前端 ----------
-# 依赖包：别人跑一次 npm install 就能重建这 61 个包
+# 依赖包：别人跑一次 npm install 就能重建这些包
 node_modules/
 dist/
 .vite/
 npm-debug.log*
 yarn-error.log*
+
+# ---------- Python ----------
+# 编译缓存：Python 自动生成，删了会自动重建
+__pycache__/
+*.py[cod]
+
+# 算法输出产物：图和数据文件都是脚本跑出来的，
+# 别人执行一次 python load_forecast.py 就能重新生成。
+# ★ 这一条是第 7 步做完后才补上的 —— 一开始漏了，
+#   如果不补，生成的 PNG/CSV 会被永久记进 git 历史。
+power-load-platform/analytics/output/
 
 # ---------- 本机环境（换台电脑就不一样，不该共享）----------
 # Maven 本地依赖仓库：1299 个文件，mvn 会自己下载

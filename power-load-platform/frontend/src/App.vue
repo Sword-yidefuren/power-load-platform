@@ -16,13 +16,16 @@ import {
   getLoadRecords,
   getRegionSummary,
   getRegionDetail,
-  getDailyStat
+  getDailyStat,
+  getForecast,
+  getForecastOverview
 } from './api'
 
 import TrendChart from './components/TrendChart.vue'
 import RegionBar from './components/RegionBar.vue'
 import DailyLine from './components/DailyLine.vue'
 import AnomalyTable from './components/AnomalyTable.vue'
+import ForecastChart from './components/ForecastChart.vue'
 
 // ---------------- 数据状态 ----------------
 // ref 是 Vue 3 的"响应式"容器：它里面的值一变，用到它的地方会自动重新渲染。
@@ -30,28 +33,34 @@ const records = ref([])        // 明细记录
 const summary = ref([])        // 按地区聚合
 const detail = ref([])         // 按地区聚合 + 派生指标
 const daily = ref([])          // 算法算好的日统计
+const forecast = ref([])        // 预测曲线（按地区分组）
+const forecastInfo = ref({})    // 预测概览（点数、R²、免责说明）
 const loading = ref(true)
 const error = ref('')
 const picked = ref('')         // 当前在柱状图上点选的地区
 
 /**
  * 一次把所有数据取回来。
- * Promise.all 让三个请求"同时发出"，而不是一个等一个 —— 页面加载快 3 倍。
+ * Promise.all 让多个请求"同时发出"，而不是一个等一个 —— 页面加载快好几倍。
  */
 async function loadAll() {
   loading.value = true
   error.value = ''
   try {
-    const [rec, sum, det, dai] = await Promise.all([
+    const [rec, sum, det, dai, fc, fcInfo] = await Promise.all([
       getLoadRecords(),
       getRegionSummary(),
       getRegionDetail(),
-      getDailyStat()
+      getDailyStat(),
+      getForecast(),
+      getForecastOverview()
     ])
     records.value = rec.data || []
     summary.value = sum.data || []
     detail.value = det.data || []
     daily.value = dai.data || []
+    forecast.value = fc.data || []
+    forecastInfo.value = fcInfo || {}
   } catch (e) {
     // api.js 的拦截器已经把错误翻译成人话了，这里直接显示
     error.value = e.message
@@ -168,6 +177,41 @@ const trendRecords = computed(() => {
           <h2>日统计：平均 / 峰值 / 谷值</h2>
           <div class="hint">数据来自 load_daily_stat 表</div>
           <DailyLine :daily="daily" />
+        </div>
+      </div>
+
+      <!-- ============================================================
+           第 7 步：负荷预测（Python 线性回归 + 回写数据库 + 后端接口）
+           ============================================================ -->
+      <div class="card">
+        <h2>负荷预测：历史实际 vs 未来 24 小时</h2>
+        <div class="hint">
+          实线 = 历史实际负荷　|　深色虚线 = 模型见过的时刻（相对可靠）　|　
+          <span style="color: #f56c6c">浅色点线 = 模型外推（训练时未见过该时刻，可信度低）</span>
+        </div>
+        <ForecastChart :series="forecast" :records="records" />
+        <div class="kpi-row" style="margin-top: 16px; margin-bottom: 0">
+          <div class="kpi-card">
+            <div class="label">预测点数</div>
+            <div class="value">{{ forecastInfo.totalPoints || 0 }}<span class="unit">个</span></div>
+          </div>
+          <div class="kpi-card">
+            <div class="label">覆盖地区</div>
+            <div class="value">{{ forecastInfo.regionCount || 0 }}<span class="unit">个</span></div>
+          </div>
+          <div class="kpi-card">
+            <div class="label">模型留一法 R²</div>
+            <div class="value">{{ forecastInfo.modelR2 ?? '-' }}</div>
+          </div>
+          <div class="kpi-card warn">
+            <div class="label">模型说明</div>
+            <div class="value" style="font-size: 13px; line-height: 1.5">
+              仅 8 条训练数据<br />不代表真实预测能力
+            </div>
+          </div>
+        </div>
+        <div class="hint" style="margin-top: 12px; margin-bottom: 0">
+          {{ forecastInfo.note }}
         </div>
       </div>
 

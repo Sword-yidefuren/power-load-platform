@@ -70,3 +70,15 @@ export function getByDate() {
 export function getDailyStat() {
   return http.get('/stats/daily').then((r) => r.data)
 }
+
+// ---------------- 预测（第 7 步）----------------
+/** 预测曲线，按地区分组。每个点带 extrapolated 标记（是否属于模型外推） */
+export function getForecast(regionCode) {
+  const params = regionCode ? { regionCode } : {}
+  return http.get('/forecast', { params }).then((r) => r.data)
+}
+
+/** 预测概览：点数、地区数、模型 R² */
+export function getForecastOverview() {
+  return http.get('/forecast/overview').then((r) => r.data)
+}
